@@ -8,8 +8,8 @@ manager = Manager(app)
 
 # flask shell command
 manager.add_command("runserver",
-                    Server(host=app.config['SERVER_HOST'],
-                           port=app.config['SERVER_PORT'],
+                    Server(host=app.config['FLASK_RUN_HOST'],
+                           port=app.config['FLASK_RUN_PORT'],
                            use_debugger=app.config['DEBUG']))
 
 
