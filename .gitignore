@@ -108,5 +108,6 @@ venv.bak/
 .idea/
 
 # settings
-# /development_settings.py
-# /production_settings.py
+/development_settings.py
+/production_settings.py
+/wx_secret.py
