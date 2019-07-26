@@ -10,6 +10,7 @@ watchdog = "*"
 flask = "*"
 python-dotenv = "*"
 flask-script = "*"
+requests = "*"
 
 [requires]
 python_version = "3.7"

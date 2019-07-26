@@ -1,3 +1,3 @@
-FLASK_ENV = 'production'
+FLASK_ENV = 'development'
 FLASK_RUN_PORT = 5005
 FLASK_RUN_HOST = '0.0.0.0'

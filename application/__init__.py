@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask
+from application.controller.api import api_blueprint
 
 
 class Application(Flask):
@@ -11,3 +12,5 @@ class Application(Flask):
 
 
 app = Application(__name__, root_path=os.getcwd())
+
+app.register_blueprint(api_blueprint)
