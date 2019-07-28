@@ -10,7 +10,7 @@ def wx_login():
     if 'code' not in data:
         response = make_response({
             'err_msg': 'argument code is not defined',
-            'err_code': '4001'
+            'err_code': '4002'
         }, 400)
         response.mimetype = 'application/json'
         return response

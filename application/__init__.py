@@ -1,7 +1,9 @@
 import os
 
 from flask import Flask
+from flask_pymongo import PyMongo
 from application.controller.api import api_blueprint
+from application.controller.api.forms import FormAPI
 
 
 class Application(Flask):
@@ -12,5 +14,6 @@ class Application(Flask):
 
 
 app = Application(__name__, root_path=os.getcwd())
+mongo = PyMongo(app)
 
 app.register_blueprint(api_blueprint)
