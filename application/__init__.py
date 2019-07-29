@@ -3,7 +3,6 @@ import os
 from flask import Flask
 from flask_pymongo import PyMongo
 from application.controller.api import api_blueprint
-from application.controller.api.forms import FormAPI
 
 
 class Application(Flask):

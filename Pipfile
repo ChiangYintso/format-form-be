@@ -13,6 +13,7 @@ flask-script = "*"
 requests = "*"
 flask-pymongo = "*"
 pymongo = "*"
+flask-wtf = "*"
 
 [requires]
 python_version = "3.7"
