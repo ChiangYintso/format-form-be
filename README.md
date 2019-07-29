@@ -1,2 +1,3 @@
-# awesome-form-be
-Back end for WeChat miniprogram awesome-form.
+# format-form-be
+
+Backend for WeChat miniprogram Format Form.
