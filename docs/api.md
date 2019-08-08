@@ -1,22 +1,31 @@
-# 1. Format Form API文档
+# Format Form API文档
 
-- [1.1. Base URL](#11-base-url)
-- [1.2. 问题类型](#12-问题类型)
-  - [1.2.1. 单项选择](#121-单项选择)
-  - [1.2.2. 多项选择](#122-多项选择)
-  - [1.2.3. 简答](#123-简答)
-  - [1.2.4. 验证器](#124-验证器)
-- [1.3. 表单](#13-表单)
-  - [1.3.1. 新建表单](#131-新建表单)
-  - [1.3.2. 获取用户创建的全部表单](#132-获取用户创建的全部表单)
+- [Base URL](#base-url)
+- [Error Code](#error-code)
+- [问题类型](#问题类型)
+  - [单项选择](#单项选择)
+  - [多项选择](#多项选择)
+  - [简答](#简答)
+  - [验证器](#验证器)
+- [表单](#表单)
+  - [新建表单](#新建表单)
+  - [获取用户创建的全部表单](#获取用户创建的全部表单)
 
-## 1.1. Base URL
+## Base URL
 
 https://api.jiangyinzuo.cn/
 
-## 1.2. 问题类型  
+## Error Code
 
-### 1.2.1. 单项选择
++ 4001: 未知错误、默认错误
++ 4002: 参数错误
++ 5000: 服务端错误
+
+## 问题类型  
+
+每个问题均为一个对象
+
+### 单项选择
 
 *Parameters:*  
 + (String) type: "single_choice"
@@ -24,7 +33,7 @@ https://api.jiangyinzuo.cn/
 + (Number) answer: 正确选项，用数组下标表示
 + [ (Number) score: 分数 ]
 
-### 1.2.2. 多项选择
+### 多项选择
 
 *Parameters:*
 + (String) type: "multiple_choice"
@@ -32,25 +41,25 @@ https://api.jiangyinzuo.cn/
 + (Array) answer: 由下标组成的数组
 + [ (Array) score: 长度为二的数组，其中score[0]表示全对得分，score[1]表示部分选对得分，如[4, 2] ]
 
-### 1.2.3. 简答
+### 简答
 
 *Parameters:*
 + (String) type: "essay"
 + (String) answer: 回答
 + [ (Number) score: 分数 ]
 
-### 1.2.4. 验证器
+### 验证器
 
 *Parameters:*
 + (String) type: "validator"
 + (String) rules: 正则表达式
 + (String) answer: 回答
 
-## 1.3. 表单
+## 表单
 
 表单中包含的问题类型见上文“问题类型”。
 
-### 1.3.1. 新建表单
+### 新建表单
 
 *URL:*
 > POST /form_templates
@@ -60,7 +69,7 @@ https://api.jiangyinzuo.cn/
 + (String) title: 表单标题
 + (String) type: 表单类型
 + [ (Number) score: 总分 ]
-+ (Number) time_limit: 时间限制，单位：分钟
++ [ (Number) time_limit: 时间限制，单位：分钟 ]
 + [ (String) start_time: 开始时间，如"201903209000" ]
 + [ (String) end_time: 结束时间，如"201903211230" ]
 + (Array) questions: 对象数组，数组中元素均为问题类型 
@@ -68,11 +77,12 @@ https://api.jiangyinzuo.cn/
 *Response <font color="#AA5555">201</font>:*
 > {  
 > &emsp;"error_code": 0,  
+> &emsp;"form_temp_id": "_id",  
 > &emsp;"msg": "ok",  
 > &emsp;"request": "POST&emsp;/form_templates"  
 > }
 
-### 1.3.2. 获取用户创建的全部表单
+### 获取用户创建的全部表单
 
 *URL:*
 > GET /form_templates
@@ -85,4 +95,5 @@ https://api.jiangyinzuo.cn/
 > &emsp;"error_code": 0,  
 > &emsp;"msg": "ok",  
 > &emsp;"request": "GET&emsp;/form_templates"  
+> &emsp;"question_temps": [Array]
 > }

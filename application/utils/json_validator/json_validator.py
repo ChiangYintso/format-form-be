@@ -68,18 +68,66 @@ class StringValidator(BaseValidator):
         self.__min_length = min_length
         self.__re = re
 
-    def validate(self, value) -> bool:
+    def validate(self, value: str) -> bool:
         if self.__min_length <= len(value) <= self.__max_length:
-            if self.__re and fullmatch(self.__re, value):
+            if self.__re:
+                if fullmatch(self.__re, value):
+                    return True
+                else:
+                    print('[json_validator warning] value mismatch regular expression')
+                    return False
+            else:
                 return True
-            print('[json_validator warning] value mismatch regular expression')
+        else:
+            print('[json_validator warning] invalid length')
             return False
-        print('[json_validator warning] invalid length')
-        return False
 
 
 class ArrayValidator(BaseValidator):
-    pass
+    def __init__(self,
+                 arr_temp,
+                 required: bool = True,
+                 enable_extra_element: bool = True):
+        """
+        :param arr_temp: validator template, accept list or subclass
+                         of `BaseValidator`.
+        """
+        if type(arr_temp) is list:
+            for i in arr_temp:
+                if not issubclass(type(i), BaseValidator):
+                    raise TypeError('Error in <class \'ArrayValidator\'>: '
+                                    'element of \'arr_temp\' should be '
+                                    '<class \'BaseValidator\'>')
+        elif not issubclass(type(arr_temp), BaseValidator):
+            raise TypeError('Error in  <class \'ArrayValidator\'>: '
+                            'argument \'arr_temp\' should be '
+                            '<class \'BaseValidator\'> or <class \'list\'>')
+        if type(enable_extra_element) is not bool:
+            raise TypeError('Error in  <class \'ArrayValidator\'>: '
+                            'argument \'enable_extra_element\' should be'
+                            '<class \'bool\'>')
+        self.__arr_temp = arr_temp
+        self.__enable_extra_element = enable_extra_element
+        super().__init__(required)
+
+    def validate(self, value: (list, BaseValidator)) -> bool:
+        if issubclass(type(self.__arr_temp), BaseValidator):
+            for i in value:
+                if not self.__arr_temp.validate(i):
+                    print('[json_validator warning] ArrayValidator '
+                          'mismatched type')
+                    return False
+        else:
+            if len(value) != len(self.__arr_temp):
+                print('[json_validator warning] ArrayValidator '
+                      'mismatched length')
+                raise False
+            for i in range(len(value)):
+                if not self.__arr_temp[i].validate(value[i]):
+                    print('[json_validator warning] ArrayValidator '
+                          'mismatched type')
+                    return False
+        return True
 
 
 class JsonValidator(BaseValidator):
@@ -94,7 +142,7 @@ class JsonValidator(BaseValidator):
                 "key2": IntegerValidator(required=False),
                 "key3": JsonValidator(required=True)
             })
-        :param enable_extra_key: allow key not in "validator"
+        :param enable_extra_key: allow key not in "validator".
         """
         if type(enable_extra_key) is not bool:
             raise TypeError('Error in <class \'JsonValidator\'>: '
@@ -118,34 +166,51 @@ class JsonValidator(BaseValidator):
                                 'value of \'validator\' should be '
                                 '<class \'BaseValidator\'>')
 
-    def validate(self, value) -> bool:
+    def validate(self, value: dict) -> bool:
+        """
+        :param value: data in JSON type to validate.
+        """
         if not self.__enable_extra_key:
             for k in value.keys():
-                if k not in validator_temp.keys():
+                if k not in self.__validator.keys():
                     if type(k) is not str:
                         raise TypeError('Error in method JsonValidator.validate(): '
                                         'key of argument \'value\' should be '
                                         '<class \'str\'>')
                     print('[json_validator warning]', type(self), value)
                     return False
-        for k in validator_temp.keys():
-            if validator_temp[k].required and k not in value.keys():
-                print('[json_validator warning] require argument {}'.format(k))
-                return False
-            if not validator_temp[k].validate(value[k]):
-                return False
+        for k in self.__validator.keys():
+            if self.__validator[k].required:
+                if k not in value.keys():
+                    print('[json_validator warning] require argument {}'.format(k))
+                    return False
+                if not self.__validator[k].validate(value[k]):
+                    return False
         return True
 
 
 if __name__ == '__main__':
+    score_validator_temp = {
+        'subject': StringValidator(),
+        'score': IntegerValidator(min_value=0, max_value=100)
+    }
     validator_temp = {
         'name': IntegerValidator(),
-        'id': IntegerValidator(max_value=20)
+        'id': IntegerValidator(max_value=20),
+        'score': ArrayValidator([JsonValidator(score_validator_temp),
+                                 JsonValidator(score_validator_temp)])
     }
     json_validator = JsonValidator(validator_temp)
     data = {
         'name': 34,
-        'id': 23
+        'id': 20,
+        'score': [{
+            'subject': 'Chinese',
+            'score': 100
+        }, {
+            'subject': 'Math',
+            'score': 99
+        }]
     }
     if json_validator.validate(data):
         print('yes')

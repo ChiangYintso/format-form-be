@@ -18,4 +18,12 @@ def wx_login():
     response = auth_wx_login(js_code=js_code)
     print(response)
     # TODO: save session_key
-    return jsonify(openid=response['openid'])
+    if 'openid' in response:
+        return jsonify(open_id=response['openid'])
+    else:
+        response = make_response({
+            'err_msg': 'server error',
+            'err_code': '5000'
+        }, 500)
+        response.mimetype = 'application/json'
+        return response
