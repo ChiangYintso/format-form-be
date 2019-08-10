@@ -12,6 +12,8 @@ python-dotenv = "*"
 flask-script = "*"
 requests = "*"
 pymongo = "*"
+flask-apscheduler = "*"
+micropython-fcntl = "*"
 
 [requires]
 python_version = "3.7"

@@ -6,18 +6,31 @@ from application.models.form_templates_model import FormTemplatesModel
 
 
 class FormTemplatesAPI(MethodView):
-    def get(self, open_id):
-        _open_id: str = request.args.get('open_id')
-        res = FormTemplatesModel.find_form_template_by_open_id(current_app, _open_id)
-        print(res)
-        response = make_response({
-            'err_code': 0,
-            'err_msg': 'ok',
-            'request': 'GET /form_templates',
-            'question_temps': res
-        })
-        response.mimetype = 'application/json'
-        return response
+    def get(self):
+        object_id = request.args.get('object_id')
+        if object_id is None:
+            _open_id: str = request.args.get('open_id')
+            res = FormTemplatesModel.find_form_template_by_open_id(current_app, _open_id)
+            print(res)
+            response = make_response({
+                'err_code': 0,
+                'err_msg': 'ok',
+                'request': 'GET /form_templates',
+                'question_temps': res
+            })
+            response.mimetype = 'application/json'
+            return response
+        else:
+            res = FormTemplatesModel.find_one_form_template_by_id(current_app, object_id)
+            print(res)
+            response = make_response({
+                'err_code': 0,
+                'err_msg': 'ok',
+                'request': 'GET /form_templates/?object_id=OBJECT_ID',
+                'form_temp': res
+            })
+            response.mimetype = 'application/json'
+            return response
 
     def post(self):
         data: dict = json.loads(request.data)
@@ -49,5 +62,17 @@ class FormTemplatesAPI(MethodView):
                 'request': 'POST /form_templates',
                 'form_temp_id': res
             }, 201)
+            response.mimetype = 'application/json'
+            return response
+
+    def delete(self):
+        query: dict = request.get_json()
+        res = FormTemplatesModel.del_form_template(current_app, query['_id'], query['open_id'])
+        if res['n'] == 1:
+            response = make_response({
+                'error_code': 0,
+                'msg': 'ok',
+                'request': 'DELETE /form_templates',
+            }, 200)
             response.mimetype = 'application/json'
             return response

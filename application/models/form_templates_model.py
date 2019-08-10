@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
+from bson import ObjectId
 from application.utils.json_validator import (
     JsonValidator,
     StringValidator,
@@ -60,3 +61,18 @@ class FormTemplatesModel:
         for doc in docs:
             doc['_id'] = str(doc['_id'])
         return docs
+
+    @classmethod
+    def del_form_template(cls, current_app, object_id, open_id):
+        _query = {'_id': ObjectId(object_id), 'open_id': open_id}
+        res = current_app.mongo.db.form_templates.delete_one(_query)
+        return res.raw_result
+
+    @classmethod
+    def find_one_form_template_by_id(cls, current_app, _id):
+        res = current_app.mongo.db.form_templates.find_one({
+            '_id': ObjectId(_id)
+        })
+        res['_id'] = str(res['_id'])
+        res['created_at'] = datetime.strftime(res['created_at'], '%Y%m%d')
+        return res
