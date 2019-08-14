@@ -7,11 +7,13 @@
   - [多项选择](#多项选择)
   - [简答](#简答)
   - [验证器](#验证器)
-- [表单](#表单)
+- [表单模板](#表单模板)
   - [新建表单](#新建表单)
   - [获取用户创建的全部表单](#获取用户创建的全部表单)
   - [获取一个表单模板](#获取一个表单模板)
   - [删除表单模板](#删除表单模板)
+- [表单数据](#表单数据)
+  - [提交表单数据](#提交表单数据)
 ## Base URL
 
 https://api.jiangyinzuo.cn/
@@ -56,7 +58,7 @@ https://api.jiangyinzuo.cn/
 + (String) rules: 正则表达式
 + (String) answer: 回答
 
-## 表单
+## 表单模板
 
 表单中包含的问题类型见上文“问题类型”。
 
@@ -112,7 +114,7 @@ https://api.jiangyinzuo.cn/
 > &emsp;"error_code": 0,  
 > &emsp;"msg": "ok",  
 > &emsp;"request": "GET&emsp;/form_templates"  
-> &emsp;"form_temps": [Object]
+> &emsp;"form_temps": [Object]  
 > }
 
 ### 删除表单模板
@@ -130,3 +132,12 @@ https://api.jiangyinzuo.cn/
 > &emsp;"msg": "ok",   
 > &emsp;"request": "DELETE /form_templates"  
 > }  
+
+## 表单数据
+
+### 提交表单数据
+
+*URL:*
+> POST /form_data
+
+*Parameters:*
