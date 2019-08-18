@@ -9,7 +9,6 @@ watchdog = "*"
 [packages]
 flask = "*"
 python-dotenv = "*"
-flask-script = "*"
 requests = "*"
 pymongo = "*"
 flask-apscheduler = "*"

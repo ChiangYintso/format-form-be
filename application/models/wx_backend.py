@@ -24,7 +24,7 @@ class CronJobConfig:
         'id': 'get_access_token',
         'func': 'application.models.wx_backend:get_access_token',
         'trigger': 'interval',  # interval task
-        'seconds': 2000
+        'seconds': 5
     }]
 
 
