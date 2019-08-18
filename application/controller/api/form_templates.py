@@ -16,7 +16,7 @@ class FormTemplatesAPI(MethodView):
                 'err_code': 0,
                 'err_msg': 'ok',
                 'request': 'GET /form_templates',
-                'question_temps': res
+                'form_temps': res
             })
             response.mimetype = 'application/json'
             return response

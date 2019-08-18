@@ -14,6 +14,7 @@ requests = "*"
 pymongo = "*"
 flask-apscheduler = "*"
 micropython-fcntl = "*"
+openpyxl = "*"
 
 [requires]
 python_version = "3.7"

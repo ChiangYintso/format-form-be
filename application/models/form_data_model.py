@@ -8,6 +8,7 @@ from application.utils.json_validator import (
 
 class FormDataModel:
     __validator = JsonValidator(validator={
+        'open_id': StringValidator(min_length=1),
         'object_id': StringValidator(min_length=1)
     }, enable_extra_key=True)
 
@@ -27,7 +28,12 @@ class FormDataModel:
             res = current_app.mongo.db.form_templates.update_one(
                 filter={'_id': ObjectId(data['object_id'])},
                 update={
-                    '$push': {'form_data': data['form_data']}
+                    '$push': {
+                        'form_data': {
+                            'answer': data['form_data'],
+                            'open_id': data['open_id']
+                        }
+                    }
                 }
             )
             return res.matched_count > 0

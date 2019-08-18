@@ -47,6 +47,7 @@ class FormTemplatesModel:
         """
         if cls.validate(doc):
             doc['created_at'] = datetime.now()
+            doc['form_data'] = []
             return current_app.mongo.db.form_templates.insert_one(doc)
         else:
             return False

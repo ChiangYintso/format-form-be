@@ -18,4 +18,4 @@ class Application(Flask):
 
 app = Application(__name__, root_path=os.getcwd())
 
-app.register_blueprint(api_blueprint)
+app.register_blueprint(api_blueprint, url_prefix='/api/')
