@@ -111,3 +111,5 @@ venv.bak/
 /development_settings.py
 /production_settings.py
 /wx_secret.py
+/access_token.txt
+/pic.png

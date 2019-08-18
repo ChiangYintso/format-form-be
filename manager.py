@@ -1,6 +1,7 @@
-"""entrance of application
+""" entrance of application
 """
 
+from flask_apscheduler import APScheduler
 from flask_script import Manager, Server
 from application import app
 
@@ -14,6 +15,9 @@ manager.add_command("runserver",
 
 
 def main():
+    scheduler = APScheduler()
+    scheduler.init_app(app=app)
+    scheduler.start()
     manager.run()
 
 
