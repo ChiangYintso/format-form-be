@@ -13,8 +13,8 @@ flask-script = "*"
 requests = "*"
 pymongo = "*"
 flask-apscheduler = "*"
-micropython-fcntl = "*"
 openpyxl = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.7"

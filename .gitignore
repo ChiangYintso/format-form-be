@@ -113,3 +113,4 @@ venv.bak/
 /wx_secret.py
 /access_token.txt
 /pic.png
+/.manager.py.swp
