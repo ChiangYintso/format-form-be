@@ -22,7 +22,15 @@ class FormTemplatesAPI(MethodView):
             return response
         else:
             res = FormTemplatesModel.find_one_form_template_by_id(current_app, object_id)
-            print(res)
+            if res is False:
+                response = make_response({
+                    'err_code': 5101,
+                    'err_msg': 'no_form',
+                    'request': 'GET /form_templates/?object_id=OBJECT_ID'
+                })
+                response.mimetype = 'application/json'
+                return response
+
             response = make_response({
                 'err_code': 0,
                 'err_msg': 'ok',

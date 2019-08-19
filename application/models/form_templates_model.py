@@ -74,6 +74,8 @@ class FormTemplatesModel:
         res = current_app.mongo.db.form_templates.find_one({
             '_id': ObjectId(_id)
         }, projection=['_id', 'questions', 'type', 'title', 'created_at'])
+        if res is None:  # no matched data
+            return False
         res['_id'] = str(res['_id'])
         res['created_at'] = datetime.strftime(res['created_at'], '%Y%m%d')
         return res
