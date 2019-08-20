@@ -8,6 +8,7 @@ from application.utils.json_validator import (
     IntegerValidator,
     ArrayValidator
 )
+from .person_model import PersonModel
 
 
 class FormTemplatesModel:
@@ -37,31 +38,39 @@ class FormTemplatesModel:
         })
 
     @classmethod
-    def insert_a_document(cls, current_app, doc: dict):
+    def generate_a_form_temp(cls, current_app, doc: dict):
         """
         :param current_app: global instance of Flask app.
         :param doc: document to be insert.
-        :return: if doc is valid and successfully inserted to database,
+        :return: if 'doc' is valid and successfully inserted to database,
                  return an instance of InsertOneResult(see document of pymongo).
                  If failed, return False.
         """
         if cls.validate(doc):
-            doc['created_at'] = datetime.now()
             doc['form_data'] = []
-            return current_app.mongo.db.form_templates.insert_one(doc)
-        else:
-            return False
+            doc['statistical_results'] = cls.__generate_statistical_results(doc['questions'])
+            res = current_app.mongo.db.form_templates.insert_one(doc)
+            _inserted_id = str(res.inserted_id)
+            person = PersonModel(current_app, doc['open_id'])
+            if person.write_form_temp(_inserted_id):
+                return _inserted_id
+        return False
+
+    @classmethod
+    def __generate_statistical_results(cls, questions: list):
+        res = []
+        for i in range(len(questions)):
+            if questions[i]['type'] == 'select' or questions[i]['type'] == 'radio':
+                res.append({
+                    'qid': i,
+                    'desc': questions[i]['desc'],
+                    'res': [0, ] * len(questions[i]['detail'])
+                })
+        return res
 
     @classmethod
     def validate(cls, data):
         return cls.validator.validate(data)
-
-    @classmethod
-    def find_form_template_by_open_id(cls, current_app, open_id) -> list:
-        docs = list(current_app.mongo.db.form_templates.find({'open_id': open_id}))
-        for doc in docs:
-            doc['_id'] = str(doc['_id'])
-        return docs
 
     @classmethod
     def del_form_template(cls, current_app, object_id, open_id):
@@ -71,11 +80,16 @@ class FormTemplatesModel:
 
     @classmethod
     def find_one_form_template_by_id(cls, current_app, _id):
+        """
+        Fill in the form
+        :param current_app:
+        :param _id:
+        :return:
+        """
         res = current_app.mongo.db.form_templates.find_one({
             '_id': ObjectId(_id)
         }, projection=['_id', 'questions', 'type', 'title', 'created_at'])
         if res is None:  # no matched data
             return False
         res['_id'] = str(res['_id'])
-        res['created_at'] = datetime.strftime(res['created_at'], '%Y%m%d')
         return res

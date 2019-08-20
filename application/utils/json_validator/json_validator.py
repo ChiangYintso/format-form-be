@@ -37,8 +37,9 @@ class IntegerValidator(BaseValidator):
 
     def validate(self, value: int) -> bool:
         if type(value) is not int:
-            raise TypeError('Error in <class \'IntegerValidator\'>: '
-                            'argument \'value\' should be <class \'int\'>')
+            print('Error in <class \'IntegerValidator\'>: '
+                  'argument \'value\' should be <class \'int\'>')
+            return False
         if self.__min_value <= value <= self.__max_value:
             return True
         print('[json_validator warning]', type(self), value)
@@ -174,9 +175,10 @@ class JsonValidator(BaseValidator):
             for k in value.keys():
                 if k not in self.__validator.keys():
                     if type(k) is not str:
-                        raise TypeError('Error in method JsonValidator.validate(): '
-                                        'key of argument \'value\' should be '
-                                        '<class \'str\'>')
+                        print('Error in method JsonValidator.validate(): '
+                              'key of argument \'value\' should be '
+                              '<class \'str\'>')
+                        return False
                     print('[json_validator warning]', type(self), value)
                     return False
         for k in self.__validator.keys():
