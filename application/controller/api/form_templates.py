@@ -12,7 +12,7 @@ class FormTemplatesAPI(MethodView):
         if object_id is None:  # GET /form_templates
             _open_id: str = request.args.get('open_id')
             person = PersonModel(current_app, _open_id)
-            res = person.get_form_temps()
+            res: list = person.get_form_temps()
 
             response = make_response({
                 'err_code': 0,

@@ -22,8 +22,15 @@ class FormDataModel:
         Validate and Write form data to MongoDB.
         :param current_app: Current Flask instance.
         :param data: Form data received from mini program.
+                        {
+                            'form_data': <value>,
+                            'object_id': <value>,
+                            'open_id': <value>,
+                            'form_types': <value>
+                        }
         :return: A boolean represents whether form data is successfully saved.
         """
+
         if cls.__validate(data):
             res = current_app.mongo.db.form_templates.update_one(
                 filter={'_id': ObjectId(data['object_id'])},
@@ -36,6 +43,34 @@ class FormDataModel:
                     }
                 }
             )
+
+            _idx = 0
+            _data_idx = 0
+            for ans_type in data['form_types']:
+                if ans_type == 'radio' and data['form_data'][_data_idx] != '':
+                    current_app.mongo.db.form_templates.update_one(
+                        filter={'_id': ObjectId(data['object_id'])},
+                        update={
+                            '$inc': {
+                                'statistical_results.{}.res.{}'.format(_idx, data['form_data'][_data_idx]): 1
+                            }
+                        }
+                    )
+                elif ans_type == 'select':
+                    for j in data['form_data'][_data_idx]:
+                        current_app.mongo.db.form_templates.update_one(
+                            filter={'_id': ObjectId(data['object_id'])},
+                            update={
+                                '$inc': {
+                                    'statistical_results.{}.res.{}'.format(_idx, j): 1
+                                }
+                            }
+                        )
+                else:
+                    _idx -= 1
+                _idx += 1
+                _data_idx += 1
+
             return res.matched_count > 0
         else:
             return False
