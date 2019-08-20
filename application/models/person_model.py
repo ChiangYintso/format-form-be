@@ -21,21 +21,24 @@ class PersonModel:
         }, upsert=True)
         return res.matched_count >= 0
 
-    def write_form_data(self, form_data_id):
+    def write_form_data(self, form_temp_id):
         res = self.__current_app.mongo.db.people.update_one({
             '_id': self.__open_id
         }, {
-            '$push': {'form_data': ObjectId(form_data_id)}
+            '$addToSet': {'form_data': ObjectId(form_temp_id)}
         }, upsert=True)
 
         return res.matched_count >= 0
 
-    def get_form_temps(self):
+    def get_form_temps(self) -> list:
         _res = self.__current_app.mongo.db.people.find_one(filter={
             '_id': self.__open_id
         }, projection={'_id': False, 'form_temps': True})
+        if _res is None:
+            return []
+
         _form_temps = _res['form_temps']
-        print('_form_temps', _form_temps)
+
         res = list(self.__current_app.mongo.db.form_templates.find(filter={
             '_id': {'$in': _form_temps}
         }))
@@ -55,6 +58,30 @@ class PersonModel:
                 return True
 
         return False
+
+    def get_form_data(self):
+        _res = self.__current_app.mongo.db.people.find_one(
+            filter={
+                '_id': self.__open_id
+            },
+            projection={
+                '_id': False,
+                'form_data': True
+            })
+
+        _form_temp_id_arr = _res['form_data']
+        res = list(self.__current_app.mongo.db.form_templates.find(
+            filter={
+                '_id': {'$in': _form_temp_id_arr}
+            }
+        ))
+        for form_data in res:
+            form_data['form_data'] = list(
+                filter(lambda x: x['open_id'] == self.__open_id,
+                       form_data['form_data'])
+            )
+            form_data['_id'] = str(form_data['_id'])
+        return res
 
     @classmethod
     def auth_wx_login(cls, js_code,
