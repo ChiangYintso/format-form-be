@@ -17,7 +17,7 @@ class FormDataModel:
         return cls.__validator.validate(data)
 
     @classmethod
-    def post_form_data(cls, current_app, data: dict) -> bool:
+    def write_form_data(cls, current_app, data: dict) -> bool:
         """
         Validate and Write form data to MongoDB.
         :param current_app: Current Flask instance.

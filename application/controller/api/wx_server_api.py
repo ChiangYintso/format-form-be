@@ -1,6 +1,7 @@
 from flask import request, jsonify, make_response
 
-from application.models.wx_backend import auth_wx_login, get_qr_code
+from application.models.wx_backend import get_qr_code
+from application.models.person_model import PersonModel
 from . import api_blueprint
 
 
@@ -15,9 +16,10 @@ def wx_login():
         response.mimetype = 'application/json'
         return response
     js_code = data['code']
-    response = auth_wx_login(js_code=js_code)
+    response = PersonModel.auth_wx_login(js_code=js_code)
     print(response)
     # TODO: save session_key
+    # TODO： merge requests
     if 'openid' in response:
         return jsonify(open_id=response['openid'])
     else:

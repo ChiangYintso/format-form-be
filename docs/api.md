@@ -2,11 +2,6 @@
 
 - [Base URL](#base-url)
 - [Error Code](#error-code)
-- [问题类型](#问题类型)
-  - [单项选择](#单项选择)
-  - [多项选择](#多项选择)
-  - [简答](#简答)
-  - [验证器](#验证器)
 - [表单模板](#表单模板)
   - [新建表单](#新建表单)
   - [获取用户创建的全部表单](#获取用户创建的全部表单)
@@ -23,40 +18,6 @@ https://api.jiangyinzuo.cn/
 + 4001: 未知错误、默认错误
 + 4002: 参数错误
 + 5000: 服务端错误
-
-## 问题类型  
-
-每个问题均为一个对象
-
-### 单项选择
-
-*Parameters:*  
-+ (String) type: "single_choice"
-+ (Array) options: 由选项组成的数组
-+ (Number) answer: 正确选项，用数组下标表示
-+ [ (Number) score: 分数 ]
-
-### 多项选择
-
-*Parameters:*
-+ (String) type: "multiple_choice"
-+ (Array) options: 由选项组成的数组
-+ (Array) answer: 由下标组成的数组
-+ [ (Array) score: 长度为二的数组，其中score[0]表示全对得分，score[1]表示部分选对得分，如[4, 2] ]
-
-### 简答
-
-*Parameters:*
-+ (String) type: "essay"
-+ (String) answer: 回答
-+ [ (Number) score: 分数 ]
-
-### 验证器
-
-*Parameters:*
-+ (String) type: "validator"
-+ (String) rules: 正则表达式
-+ (String) answer: 回答
 
 ## 表单模板
 
@@ -75,7 +36,12 @@ https://api.jiangyinzuo.cn/
 + [ (Number) time_limit: 时间限制，单位：分钟 ]
 + [ (String) start_time: 开始时间，如"201903209000" ]
 + [ (String) end_time: 结束时间，如"201903211230" ]
-+ (Array) questions: 对象数组，数组中元素均为问题类型 
++ (Array) questions: [{   
++   "desc": (String),
++   "type": (String) ["select", "radio", "essay"],
++   "necessary": (String) ["yes", "no"],
++   "detail": (Array, String) ["option1", "option2"], <re>
++ }, ...]
 
 *Response <font color="#AA5555">201</font>:*
 > {  

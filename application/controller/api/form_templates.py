@@ -3,15 +3,17 @@ from flask import request, make_response, current_app
 from flask.views import MethodView
 
 from application.models.form_templates_model import FormTemplatesModel
+from application.models.person_model import PersonModel
 
 
 class FormTemplatesAPI(MethodView):
     def get(self):
         object_id = request.args.get('object_id')
-        if object_id is None:
+        if object_id is None:  # GET /form_templates
             _open_id: str = request.args.get('open_id')
-            res = FormTemplatesModel.find_form_template_by_open_id(current_app, _open_id)
-            print(res)
+            person = PersonModel(current_app, _open_id)
+            res = person.get_form_temps()
+
             response = make_response({
                 'err_code': 0,
                 'err_msg': 'ok',
@@ -20,7 +22,7 @@ class FormTemplatesAPI(MethodView):
             })
             response.mimetype = 'application/json'
             return response
-        else:
+        else:  # GET /form_templates/object_id=OBJECT_ID
             res = FormTemplatesModel.find_one_form_template_by_id(current_app, object_id)
             print(res)
             response = make_response({
@@ -45,7 +47,7 @@ class FormTemplatesAPI(MethodView):
         # If data is valid and successfully inserted into database,
         # res is value of '_id', or res is False.
 
-        res = FormTemplatesModel.insert_a_document(
+        res = FormTemplatesModel.generate_a_form_temp(
             current_app, data)
         if res is False:
             response = make_response({
@@ -55,7 +57,6 @@ class FormTemplatesAPI(MethodView):
             response.mimetype = 'application/json'
             return response
         else:
-            res = str(res.inserted_id)
             response = make_response({
                 'error_code': 0,
                 'msg': 'ok',

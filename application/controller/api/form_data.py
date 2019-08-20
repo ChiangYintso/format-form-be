@@ -2,14 +2,15 @@
 import json
 from flask import request, make_response, current_app
 from flask.views import MethodView
-from application.models.form_data_model import FormDataModel
+from application.models.person_model import PersonModel
 
 
 class FormDataAPI(MethodView):
     def post(self):
         data: dict = json.loads(request.data)
         print(data)
-        if FormDataModel.post_form_data(current_app, data):
+        person = PersonModel(current_app, data['open_id'])
+        if person.post_form_data(data):
             response = make_response({
                 'err_code': 0,
                 'err_msg': 'ok',
