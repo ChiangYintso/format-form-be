@@ -5,7 +5,6 @@
 - [表单模板](#表单模板)
   - [新建表单](#新建表单)
   - [获取用户创建的全部表单](#获取用户创建的全部表单)
-  - [获取一个表单模板](#获取一个表单模板)
   - [删除表单模板](#删除表单模板)
 - [表单数据](#表单数据)
   - [提交表单数据](#提交表单数据)
@@ -66,22 +65,6 @@ https://api.jiangyinzuo.cn/
 > &emsp;"msg": "ok",  
 > &emsp;"request": "GET&emsp;/form_templates"  
 > &emsp;"question_temps": [Array]
-> }
-
-### 获取一个表单模板
-
-*URL:*
-> GET /form_templates/?object_id=OBJECT_ID
-
-*Parameters:*
-+ (String) object_id: 表单在mongodb中存储的_id
-
-*Response <font color="#AA5555">200</font>:*
-> {  
-> &emsp;"error_code": 0,  
-> &emsp;"msg": "ok",  
-> &emsp;"request": "GET&emsp;/form_templates"  
-> &emsp;"form_temps": [Object]  
 > }
 
 ### 删除表单模板

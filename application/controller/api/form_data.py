@@ -24,18 +24,3 @@ class FormDataAPI(MethodView):
             })
         response.mimetype = 'application/json'
         return response
-
-    def get(self):
-        _open_id: str = request.args.get('open_id')
-        person = PersonModel(current_app, _open_id)
-
-        res: list = person.get_form_data()
-        print(res)
-        response = make_response({
-            'err_code': 0,
-            'err_msg': 'ok',
-            'request': 'GET /form_data',
-            'form_temp': res
-        })
-        response.mimetype = 'application/json'
-        return response

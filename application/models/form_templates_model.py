@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
 from bson import ObjectId
+
+from application.utils.exception.custom_exception import CustomException
 from application.utils.json_validator import (
     JsonValidator,
     StringValidator,
-    IntegerValidator,
     ArrayValidator
 )
 from .person_model import PersonModel
@@ -16,8 +16,6 @@ class FormTemplatesModel:
             'open_id': StringValidator(min_length=1),
             'title': StringValidator(min_length=1),
             'type': StringValidator(min_length=1),
-            'score': IntegerValidator(required=False, min_value=0, max_value=100),
-            'time_limit': IntegerValidator(required=False, min_value=0),
             'start_time': StringValidator(required=False,
                                           min_length=12,
                                           max_length=12,
@@ -35,7 +33,8 @@ class FormTemplatesModel:
                 ),
                 required=True
             )
-        })
+        },
+        enable_extra_key=True)
 
     @classmethod
     def generate_a_form_temp(cls, current_app, doc: dict):
@@ -88,8 +87,30 @@ class FormTemplatesModel:
         """
         res = current_app.mongo.db.form_templates.find_one({
             '_id': ObjectId(_id)
-        }, projection=['_id', 'questions', 'type', 'title', 'created_at'])
-        if res is None:  # no matched data
-            return False
+        }, projection={
+            'form_data': False,
+            'open_id': False
+        })
+
+        if res is None:
+            raise CustomException(5000, 'form not found')
         res['_id'] = str(res['_id'])
+
         return res
+
+    @classmethod
+    def login_and_send_blank_form(cls, js_code, current_app, form_temp_id):
+
+        _user_info = PersonModel.auth_wx_login(js_code=js_code)
+        if 'openid' not in _user_info:
+            raise CustomException(5000, 'login error')
+
+        person = PersonModel(current_app=current_app,
+                             open_id=_user_info['openid'])
+
+        res = cls.find_one_form_template_by_id(current_app, form_temp_id)
+        print(res)
+        if not res['repeat_filling']:
+            person.check_repeat_filling(form_temp_id)
+
+        return res, _user_info['openid']

@@ -3,6 +3,7 @@
 from bson import ObjectId
 import requests
 from .form_data_model import FormDataModel
+from application.utils.exception.custom_exception import CustomException
 from wx_secret import APP_SECRET, APP_ID, AUTH_URL
 
 
@@ -30,7 +31,7 @@ class PersonModel:
 
         return res.matched_count >= 0
 
-    def get_form_temps(self) -> list:
+    def get_launched_forms(self) -> list:
         _res = self.__current_app.mongo.db.people.find_one(filter={
             '_id': self.__open_id
         }, projection={'_id': False, 'form_temps': True})
@@ -44,6 +45,7 @@ class PersonModel:
         }))
 
         for i in res:
+            i['created_at'] = i['_id'].generation_time
             i['_id'] = str(i['_id'])
 
         return res
@@ -59,7 +61,7 @@ class PersonModel:
 
         return False
 
-    def get_form_data(self):
+    def get_involved_forms(self) -> list:
         _res = self.__current_app.mongo.db.people.find_one(
             filter={
                 '_id': self.__open_id
@@ -69,7 +71,10 @@ class PersonModel:
                 'form_data': True
             })
 
-        _form_temp_id_arr = _res['form_data']
+        _form_temp_id_arr = _res.get('form_data')
+        if _form_temp_id_arr is None:
+            return []
+
         res = list(self.__current_app.mongo.db.form_templates.find(
             filter={
                 '_id': {'$in': _form_temp_id_arr}
@@ -83,6 +88,16 @@ class PersonModel:
             form_data['_id'] = str(form_data['_id'])
         return res
 
+    def delete_form_temp(self, form_temp_id):
+        _res = self.__current_app.mongo.db.people.update_one({
+            '_id': self.__open_id,
+        }, update={
+          '$pull': {'form_temps': ObjectId(form_temp_id)}
+        })
+
+        if _res.matched_count <= 0:
+            raise CustomException(5000, 'server error', status_code=500)
+
     @classmethod
     def auth_wx_login(cls, js_code,
                       auth_url=AUTH_URL,
@@ -90,8 +105,22 @@ class PersonModel:
                       secret=APP_SECRET,
                       grant_type='authorization_code'
                       ) -> dict:
+
         if type(js_code) is not str:
             raise TypeError('TypeError in function auth_wx_login: js_code must be string')
         _url = auth_url.format(app_id, secret, js_code, grant_type)
         response = requests.get(_url)
+
         return response.json()
+
+    def check_repeat_filling(self, form_temp_id) -> bool:
+
+        res = self.__current_app.mongo.db.people.find_one(
+            filter={
+                '_id': self.__open_id,
+                'form_data': ObjectId(form_temp_id)
+            }
+        )
+
+        if res is not None:
+            raise CustomException(3000, 'repeat filling')
