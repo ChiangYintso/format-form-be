@@ -31,7 +31,7 @@ class PersonModel:
 
         return res.matched_count >= 0
 
-    def get_form_temps(self) -> list:
+    def get_launched_forms(self) -> list:
         _res = self.__current_app.mongo.db.people.find_one(filter={
             '_id': self.__open_id
         }, projection={'_id': False, 'form_temps': True})
@@ -61,7 +61,7 @@ class PersonModel:
 
         return False
 
-    def get_form_data(self):
+    def get_involved_forms(self) -> list:
         _res = self.__current_app.mongo.db.people.find_one(
             filter={
                 '_id': self.__open_id

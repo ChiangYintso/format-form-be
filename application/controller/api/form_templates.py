@@ -12,13 +12,13 @@ class FormTemplatesAPI(MethodView):
         # GET /form_templates
         _open_id: str = request.args.get('open_id')
         person = PersonModel(current_app, _open_id)
-        res: list = person.get_form_temps()
+        res: list = person.get_launched_forms()
 
         response = make_response({
             'err_code': 0,
             'err_msg': 'ok',
             'request': 'GET /form_templates',
-            'form_temps': res
+            'forms': res
         })
         response.mimetype = 'application/json'
         return response
@@ -26,16 +26,13 @@ class FormTemplatesAPI(MethodView):
     def post(self):
         data: dict = json.loads(request.data)
         if data is None:
-            response = make_response({
+            return make_response({
                 'err_msg': 'no data',
                 'err_code': '4002'
             }, 400)
-            response.mimetype = 'application/json'
-            return response
 
         # If data is valid and successfully inserted into database,
         # res is value of '_id', or res is False.
-
         res = FormTemplatesModel.generate_a_form_temp(
             current_app, data)
         if res is False:
