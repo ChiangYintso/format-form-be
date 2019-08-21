@@ -15,6 +15,7 @@ def wx_login():
         }, 400)
         response.mimetype = 'application/json'
         return response
+
     js_code = data['code']
     response = PersonModel.auth_wx_login(js_code=js_code)
     print(response)
