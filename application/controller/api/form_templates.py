@@ -14,14 +14,12 @@ class FormTemplatesAPI(MethodView):
         person = PersonModel(current_app, _open_id)
         res: list = person.get_launched_forms()
 
-        response = make_response({
+        return make_response({
             'err_code': 0,
             'err_msg': 'ok',
             'request': 'GET /form_templates',
             'forms': res
         })
-        response.mimetype = 'application/json'
-        return response
 
     def post(self):
         data: dict = json.loads(request.data)
@@ -36,21 +34,17 @@ class FormTemplatesAPI(MethodView):
         res = FormTemplatesModel.generate_a_form_temp(
             current_app, data)
         if res is False:
-            response = make_response({
+            return make_response({
                 'err_msg': 'invalid data',
                 'err_code': '4002'
             }, 400)
-            response.mimetype = 'application/json'
-            return response
         else:
-            response = make_response({
+            return make_response({
                 'error_code': 0,
                 'msg': 'ok',
                 'request': 'POST /form_templates',
                 'form_temp_id': res
             }, 201)
-            response.mimetype = 'application/json'
-            return response
 
     def delete(self):
         query: dict = request.get_json()
@@ -58,10 +52,8 @@ class FormTemplatesAPI(MethodView):
         if res['n'] == 1:
             person = PersonModel(current_app, query['open_id'])
             person.delete_form_temp(query['_id'])
-            response = make_response({
+            return make_response({
                 'error_code': 0,
                 'msg': 'ok',
                 'request': 'DELETE /form_templates',
             }, 200)
-            response.mimetype = 'application/json'
-            return response

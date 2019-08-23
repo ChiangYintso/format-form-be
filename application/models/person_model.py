@@ -85,7 +85,9 @@ class PersonModel:
                 filter(lambda x: x['open_id'] == self.__open_id,
                        form_data['form_data'])
             )
+            form_data['created_at'] = form_data['_id'].generation_time
             form_data['_id'] = str(form_data['_id'])
+
         return res
 
     def delete_form_temp(self, form_temp_id):
