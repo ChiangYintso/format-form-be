@@ -114,3 +114,4 @@ venv.bak/
 /access_token.txt
 /pic.png
 /.manager.py.swp
+/application/static/excel/

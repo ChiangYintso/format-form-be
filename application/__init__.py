@@ -9,7 +9,7 @@ from application.models.wx_backend import CronJobConfig
 
 class Application(Flask):
     def __init__(self, import_name, root_path=None):
-        super(Application, self).__init__(import_name, root_path=root_path)
+        super(Application, self).__init__(import_name, root_path=root_path, static_url_path='/application/static')
         self.config.from_pyfile('.flaskenv')
         self.config.from_pyfile('{}_settings.py'.format(self.config['FLASK_ENV']))
         self.config.from_object(CronJobConfig())

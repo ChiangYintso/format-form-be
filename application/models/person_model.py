@@ -126,3 +126,6 @@ class PersonModel:
 
         if res is not None:
             raise CustomException(3000, 'repeat filling')
+
+    def get_open_id(self):
+        return self.__open_id
