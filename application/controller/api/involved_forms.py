@@ -1,7 +1,9 @@
+import json
+
 from flask import request, make_response, current_app
 from flask.views import MethodView
 
-from application.models.person_model import PersonModel
+from application.models.involved_forms_model import InvolvedFormsModel
 
 
 class InvolvedFormsAPI(MethodView):
@@ -17,8 +19,8 @@ class InvolvedFormsAPI(MethodView):
                 'request': 'GET /involved_forms'
             }, 300)
 
-        person = PersonModel(current_app, open_id)
-        involved_forms = person.get_involved_forms()
+        involved_forms_model = InvolvedFormsModel(current_app, open_id)
+        involved_forms = involved_forms_model.get_involved_forms()
 
         return make_response({
             'err_code': 0,

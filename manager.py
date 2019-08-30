@@ -1,8 +1,11 @@
 """ entrance of application
 """
+import os
 
-from flask_apscheduler import APScheduler
-from application import app
+# from flask_apscheduler import APScheduler
+from application import Application
+
+app = Application(__name__, root_path=os.getcwd())
 
 
 def main():
@@ -15,7 +18,7 @@ def main():
 if __name__ == '__main__':
     try:
         import sys
-        from werkzeug.contrib.fixers import ProxyFix
+        from werkzeug.middleware.proxy_fix import ProxyFix
         app.wsgi_app = ProxyFix(app.wsgi_app)
         sys.exit(main())
     except Exception as e:

@@ -61,7 +61,9 @@ class PersonModel:
 
         return False
 
-    def get_involved_forms(self) -> list:
+    def get_involved_forms_ids(self) -> list:
+
+        # return the user's involved forms by his/her open_id
         _res = self.__current_app.mongo.db.people.find_one(
             filter={
                 '_id': self.__open_id
@@ -71,24 +73,11 @@ class PersonModel:
                 'form_data': True
             })
 
-        _form_temp_id_arr = _res.get('form_data')
-        if _form_temp_id_arr is None:
+        form_temp_ids = _res.get('form_data')
+        if form_temp_ids is None:
             return []
 
-        res = list(self.__current_app.mongo.db.form_templates.find(
-            filter={
-                '_id': {'$in': _form_temp_id_arr}
-            }
-        ))
-        for form_data in res:
-            form_data['form_data'] = list(
-                filter(lambda x: x['open_id'] == self.__open_id,
-                       form_data['form_data'])
-            )
-            form_data['created_at'] = form_data['_id'].generation_time
-            form_data['_id'] = str(form_data['_id'])
-
-        return res
+        return form_temp_ids
 
     def delete_form_temp(self, form_temp_id):
         _res = self.__current_app.mongo.db.people.update_one({
@@ -115,7 +104,7 @@ class PersonModel:
 
         return response.json()
 
-    def check_repeat_filling(self, form_temp_id) -> bool:
+    def check_repeat_filling(self, form_temp_id):
 
         res = self.__current_app.mongo.db.people.find_one(
             filter={
