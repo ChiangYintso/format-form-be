@@ -9,7 +9,7 @@ from . import api_blueprint
 @api_blueprint.route('/wx_login', methods=['POST'])
 def wx_login():
     data = request.get_json()
-    if 'code' not in data:
+    if data is None or 'code' not in data:
         response = make_response({
             'err_msg': 'argument code is not defined',
             'err_code': '4002'
