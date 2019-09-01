@@ -11,19 +11,42 @@ class LaunchedFormsModel:
         self.__current_app = current_app
         self.__person = PersonModel(self.__current_app, open_id)
 
-    def put_launched_forms(self, form_temp_id: str, date_time: str):
-        if date_time == 'now':
-            res = self.__current_app.mongo.db.form_templates.update_one({
-                '_id': ObjectId(form_temp_id)
-            }, {
-                '$set': {'type': 'ended'}
-            })
-        else:
-            res = self.__current_app.mongo.db.form_templates.update_one({
-                '_id': ObjectId(form_temp_id)
-            }, {
-                '$set': {'end_time': date_time}
-            })
+    def put_launched_form_status(
+            self, form_temp_id: str, form_type: str, end_time: str):
+        """
+        This method is used for updating the form status in mini-program
+        detail page. If you need to update the whole form's data, use method
+        `put_launched_forms`.
+
+        :param form_temp_id: ObjectId of forms.
+        :param form_type: Type of form, values 'ended' or 'launched'.
+        :param end_time: The end time of the form.
+        :raise: CustomException if no matched document in mongodb.
+        """
+
+        res = self.__current_app.mongo.db.form_templates.update_one({
+            '_id': ObjectId(form_temp_id)
+        }, {
+            '$set': {'type': form_type, 'end_time': end_time}
+        })
+
+        if res.matched_count <= 0:
+            raise CustomException(3000, 'invalid data', 300)
+
+    def put_launched_form(self, data):
+        res = self.__current_app.mongo.db.form_templates.update_one({
+            '_id': ObjectId(data['form_temp_id'])
+        }, {
+            '$set': {
+                'title': data['title'],
+                'questions': data['questions'],
+                'type': data['type'],
+                'show_select_res': data['show_select_res'],
+                'repeat_filling': data['repeat_filling'],
+                'start_time': data['start_time'],
+                'end_time': data['end_time']
+            }
+        })
 
         if res.matched_count <= 0:
             raise CustomException(3000, 'invalid data', 300)
