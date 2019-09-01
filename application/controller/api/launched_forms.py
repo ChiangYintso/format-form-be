@@ -36,7 +36,7 @@ class LaunchedFormsAPI(MethodView):
 
     def post(self):
         """
-        Create a form template.
+        Create a new form template.
         :return:
         """
         data: dict = json.loads(request.data)
@@ -57,11 +57,24 @@ class LaunchedFormsAPI(MethodView):
             }, 400)
         else:
             return make_response({
-                'error_code': 0,
+                'err_code': 0,
                 'msg': 'ok',
                 'request': 'POST /launched_forms',
                 'form_temp_id': res
             }, 201)
+
+    def put(self):
+        data: dict = json.loads(request.data)
+        print(data)
+        launched_forms_model = LaunchedFormsModel(current_app, data['open_id'])
+        launched_forms_model.put_launched_form(data)
+
+        return make_response({
+            'err_code': 0,
+            'msg': 'ok',
+            'request': 'PUT /launched_forms',
+
+        }, 201)
 
     def delete(self):
         query: dict = request.get_json()
@@ -70,24 +83,10 @@ class LaunchedFormsAPI(MethodView):
             person = PersonModel(current_app, query['open_id'])
             person.delete_form_temp(query['_id'])
             return make_response({
-                'error_code': 0,
+                'err_code': 0,
                 'msg': 'ok',
                 'request': 'DELETE /form_templates',
             }, 200)
-
-    def put(self):
-        data: dict = json.loads(request.data)
-        try:
-            launched_forms_model = LaunchedFormsModel(current_app, data['open_id'])
-            launched_forms_model.put_launched_forms(data['form_temp_id'], data['date_time'])
-        except CustomException as e:
-            return e.make_response(request_str='PATCH /launched_forms')
-
-        return make_response({
-            'err_code': 0,
-            'err_msg': 'ok',
-            'request': 'PATCH /launched_forms'
-        })
 
 
 class LaunchedFormsExcelAPI(MethodView):
@@ -112,3 +111,26 @@ class LaunchedFormsExcelAPI(MethodView):
         )
         res.mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         return res
+
+
+class LaunchedFormsStatusAPI(MethodView):
+    url = '/launched_forms/status'
+
+    def put(self):
+        """
+        Update the form status
+        """
+        data: dict = json.loads(request.data)
+        print(data)
+
+        try:
+            launched_forms_model = LaunchedFormsModel(current_app, data['open_id'])
+            launched_forms_model.put_launched_form_status(data['form_temp_id'], data['type'], data['end_time'])
+        except CustomException as e:
+            return e.make_response(request_str='PUT /launched_forms/status')
+
+        return make_response({
+            'err_code': 0,
+            'err_msg': 'ok',
+            'request': 'PUT /launched_forms/status'
+        })
