@@ -1,4 +1,5 @@
 from flask import Flask
+
 from application.models.wx_backend import get_access_token
 from application.controller.api import api_blueprint
 from application.models import MongoDB
