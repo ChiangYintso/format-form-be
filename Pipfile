@@ -14,6 +14,7 @@ pymongo = "*"
 flask-apscheduler = "*"
 openpyxl = "*"
 gunicorn = "*"
+flask-mail = "*"
 
 [requires]
 python_version = "3.7"
