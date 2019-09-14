@@ -73,6 +73,9 @@ class PersonModel:
                 'form_data': True
             })
 
+        if _res is None:
+            return []
+
         form_temp_ids = _res.get('form_data')
         if form_temp_ids is None:
             return []

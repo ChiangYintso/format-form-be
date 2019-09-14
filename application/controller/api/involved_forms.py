@@ -1,5 +1,3 @@
-import json
-
 from flask import request, make_response, current_app
 from flask.views import MethodView
 
