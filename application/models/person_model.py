@@ -38,7 +38,9 @@ class PersonModel:
         if _res is None:
             return []
 
-        _form_temps = _res['form_temps']
+        _form_temps = _res.get('form_temps')
+        if _form_temps is None:
+            return []
 
         res = list(self.__current_app.mongo.db.form_templates.find(filter={
             '_id': {'$in': _form_temps}
