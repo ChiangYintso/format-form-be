@@ -4,10 +4,9 @@ import logging
 from logging.handlers import RotatingFileHandler, SMTPHandler
 import os
 import traceback
-from flask_mail import Mail, Message
+from flask_mail import Mail
 # from flask_apscheduler import APScheduler
 from application import Application
-from flask import request
 
 app = Application(__name__, root_path=os.getcwd())
 app.logger.setLevel(logging.INFO)
@@ -49,7 +48,7 @@ def main():
     # scheduler = APScheduler()
     # scheduler.init_app(app=app)
     # scheduler.start()
-    register_mail_logger()
+    # register_mail_logger()
     register_file_logger()
     app.run(host=app.config['FLASK_RUN_HOST'], port=8000)
 
