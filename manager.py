@@ -32,7 +32,7 @@ def register_file_logger():
 
 def register_mail_logger():
     mail_handler = SMTPHandler(
-        mailhost=app.config['MAIL_SERVER'],
+        mailhost=(app.config['MAIL_SERVER'], app.config['MAIL_PORT']),
         fromaddr=app.config['MAIL_USERNAME'],
         toaddrs=app.config['MAIL_DEFAULT_SENDER'],
         subject='Format-form-be Error',
@@ -48,7 +48,7 @@ def main():
     # scheduler = APScheduler()
     # scheduler.init_app(app=app)
     # scheduler.start()
-    # register_mail_logger()
+    register_mail_logger()
     register_file_logger()
     app.run(host=app.config['FLASK_RUN_HOST'], port=8000)
 
