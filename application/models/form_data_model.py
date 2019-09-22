@@ -44,7 +44,7 @@ class FormDataModel:
                 }
             )
 
-            if res.matched_count > 0:
+            if res.modified_count > 0:
                 _idx = 0
                 _data_idx = 0
                 for ans_type in data['form_types']:
@@ -72,6 +72,6 @@ class FormDataModel:
                     _idx += 1
                     _data_idx += 1
 
-            return True
+            return res.matched_count > 0
         else:
             return False
