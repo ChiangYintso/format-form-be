@@ -48,7 +48,7 @@ def main():
     # scheduler = APScheduler()
     # scheduler.init_app(app=app)
     # scheduler.start()
-    register_mail_logger()
+    # register_mail_logger()
     register_file_logger()
     app.run(host=app.config['FLASK_RUN_HOST'], port=8000)
 

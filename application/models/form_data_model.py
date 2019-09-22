@@ -35,7 +35,7 @@ class FormDataModel:
             res = current_app.mongo.db.form_templates.update_one(
                 filter={'_id': ObjectId(data['object_id'])},
                 update={
-                    '$push': {
+                    '$addToSet': {
                         'form_data': {
                             'answer': data['form_data'],
                             'open_id': data['open_id']
@@ -44,33 +44,34 @@ class FormDataModel:
                 }
             )
 
-            _idx = 0
-            _data_idx = 0
-            for ans_type in data['form_types']:
-                if ans_type == 'radio' and data['form_data'][_data_idx] != '':
-                    current_app.mongo.db.form_templates.update_one(
-                        filter={'_id': ObjectId(data['object_id'])},
-                        update={
-                            '$inc': {
-                                'statistical_results.{}.res.{}'.format(_idx, data['form_data'][_data_idx]): 1
-                            }
-                        }
-                    )
-                elif ans_type == 'select':
-                    for j in data['form_data'][_data_idx]:
+            if res.matched_count > 0:
+                _idx = 0
+                _data_idx = 0
+                for ans_type in data['form_types']:
+                    if ans_type == 'radio' and data['form_data'][_data_idx] != '':
                         current_app.mongo.db.form_templates.update_one(
                             filter={'_id': ObjectId(data['object_id'])},
                             update={
                                 '$inc': {
-                                    'statistical_results.{}.res.{}'.format(_idx, j): 1
+                                    'statistical_results.{}.res.{}'.format(_idx, data['form_data'][_data_idx]): 1
                                 }
                             }
                         )
-                else:
-                    _idx -= 1
-                _idx += 1
-                _data_idx += 1
+                    elif ans_type == 'select':
+                        for j in data['form_data'][_data_idx]:
+                            current_app.mongo.db.form_templates.update_one(
+                                filter={'_id': ObjectId(data['object_id'])},
+                                update={
+                                    '$inc': {
+                                        'statistical_results.{}.res.{}'.format(_idx, j): 1
+                                    }
+                                }
+                            )
+                    else:
+                        _idx -= 1
+                    _idx += 1
+                    _data_idx += 1
 
-            return res.matched_count > 0
+            return True
         else:
             return False
